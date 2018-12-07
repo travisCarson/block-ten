@@ -5,11 +5,14 @@ const Spinner = props => {
   return (
     <>
       <p>
-        Loading raw block data for block ID: <br />
-        {props.id}
+        {props.loadingRaw ? `Loading raw block data for ID ${props.id}` : ""}
       </p>
       <div className="spinner" />
-      <p className="how-to-collapse">Click anywhere in this box to collapse</p>
+      <p className="how-to-collapse">
+        {props.loadingRaw
+          ? "Click anywhere in this box to collapse when finished"
+          : ""}
+      </p>
     </>
   );
 };

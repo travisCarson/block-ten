@@ -6,6 +6,7 @@ import "./App.css";
 // import LoadingCard from "../LoadingCard/LoadingCard";
 // import dummyBlocks from "../../dummyBlocks";
 // import dummyRawJson from "../../dummyRawJson";
+import Header from "../Header/Header";
 import BlockList from "../BlockList/BlockList";
 
 class App extends Component {
@@ -13,6 +14,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
+          <Header />
           <BlockList />
         </header>
       </div>

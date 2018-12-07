@@ -1,25 +1,39 @@
 import React, { Component } from "react";
 import axios from "axios";
+import LoadButton from "../LoadButton/LoadButton";
 import BlockCard from "../BlockCard/BlockCard";
 import BlockInfo from "../BlockInfo/BlockInfo";
 import RawBlockInfo from "../RawBlockInfo/RawBlockInfo";
 import Spinner from "../Spinner/Spinner";
 import dummyBlocks from "../../dummyBlocks";
+import "./BlockList.css";
 
 class BlockList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      blocks: dummyBlocks,
-      loading: null,
+      blocks: new Array(10).fill(1),
+      loading: false,
+      loadingBlockInfo: null,
       showRaw: null,
       rawBlocks: new Map()
     };
-    this.handleClick = this.handleClick.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
+    this.handleRowClick = this.handleRowClick.bind(this);
   }
 
+  // needs error handling
+  async getBlocks() {
+    const response = await axios.get("http://localhost:1111/");
+
+    // REMOVE: for testing with latency
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    await delay(2000);
+    return response.data;
+  }
+
+  // needs error handling
   async getRaw(id) {
-    console.log("ID IS", id);
     const cached = this.state.rawBlocks.has(id);
     if (cached) {
       return this.state.rawBlocks.get(id);
@@ -30,7 +44,24 @@ class BlockList extends Component {
     return rawBlock;
   }
 
-  async handleClick(id) {
+  async handleButtonClick() {
+    console.log("called");
+    const loading = this.state.loading;
+    if (!loading) {
+      this.setState({
+        loading: true
+      });
+      const blocks = await this.getBlocks();
+      this.setState({
+        blocks
+      });
+    }
+    this.setState({
+      loading: false
+    });
+  }
+
+  async handleRowClick(id) {
     this.setState({
       loading: id
     });
@@ -44,53 +75,65 @@ class BlockList extends Component {
     this.setState({
       loading: id
     });
+    console.log(this.state.loading, this.state.showRaw);
     const rawBlock = await this.getRaw(id);
     this.setState({
       showRaw: id,
       rawBlocks: this.state.rawBlocks.set(id, rawBlock)
     });
 
-    console.log("here now");
     this.setState({
       loading: null
     });
   }
 
+  componentDidMount() {
+    this.handleButtonClick();
+    console.log(this.state.blocks);
+  }
+
   render() {
     const { blocks, loading, showRaw, rawBlocks } = this.state;
     let willRender;
+    console.log("loading in render", loading);
     return (
-      <div>
-        {blocks.map((block, index) => {
-          // console.log("IN MAP", block);
-          const { id, timestamp, actionCount } = block;
-          if (loading === id) {
-            console.log("LOADING LOADING", id);
-            willRender = () => <Spinner id={id} />;
-          } else if (showRaw === id) {
-            // console.log("HERES THE STATE", rawBlock);
-            willRender = () => <RawBlockInfo rawData={rawBlocks.get(id)} />;
-          } else {
-            willRender = props => <BlockInfo {...props} />;
-          }
-          const rowShading = index % 2 === 0 ? "even" : "odd";
-          return (
-            <BlockCard
-              key={id}
-              // probably should get rid of id here
-              id={id}
-              timestamp={timestamp}
-              actionCount={actionCount}
-              handleClick={this.handleClick}
-              render={willRender}
-              shading={rowShading}
-              {...block}
-            />
-          );
-        })}
-      </div>
+      <>
+        <button id="load-button" onClick={this.handleButtonClick}>
+          Load
+        </button>
+        <div>
+          {blocks.map((block, index) => {
+            const { id, timestamp, actionCount } = block;
+            if (loading === true || loading === id) {
+              willRender = () => (
+                <Spinner id={id} loadingRaw={loading === id} />
+              );
+            } else if (showRaw === id) {
+              willRender = () => <RawBlockInfo rawData={rawBlocks.get(id)} />;
+            } else {
+              willRender = props => <BlockInfo {...props} />;
+            }
+            const rowShading = index % 2 === 0 ? "even" : "odd";
+            return (
+              // NEED TO FIX KEY
+              <BlockCard
+                key={index}
+                id={id}
+                timestamp={timestamp}
+                actionCount={actionCount}
+                handleClick={this.handleRowClick}
+                render={willRender}
+                shading={rowShading}
+                {...block}
+              />
+            );
+          })}
+        </div>
+      </>
     );
   }
 }
 
 export default BlockList;
+
+// <LoadButton handleClick={this.handleButtonClick} text={buttonText} />

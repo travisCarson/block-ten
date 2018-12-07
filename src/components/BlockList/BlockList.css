@@ -1,0 +1,9 @@
+#load-button {
+  width: 200px;
+  height: 50px;
+  background-color: #e242f4;
+  font-family: arial;
+  color: White;
+  font-size: calc(2px + 3vmin);
+  margin: 10px;
+}
