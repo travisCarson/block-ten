@@ -1,0 +1,13 @@
+.block-info-card {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  width: 1000px;
+}
+
+.block-info-text {
+  font-family: arial;
+  color: black;
+  font-size: calc(5px + 2vmin);
+  margin: 3px;
+}
