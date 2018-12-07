@@ -1,12 +1,4 @@
-.block-info-card {
-  display: relative;
-  justify-content: center;
-  background-color: white;
-  width: 1000px;
-  margin-bottom: 3px;
-}
-
-.block-info-text {
+.block-card {
   font-family: arial;
   color: black;
   font-size: calc(2px + 2vmin);

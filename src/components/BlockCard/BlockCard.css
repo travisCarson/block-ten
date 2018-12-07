@@ -1,0 +1,10 @@
+.block-card {
+  display: relative;
+  justify-content: center;
+  background-color: white;
+  width: 1000px;
+  margin-bottom: 3px;
+}
+.odd {
+  background-color: #ccccff;
+}
