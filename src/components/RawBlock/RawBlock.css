@@ -1,0 +1,10 @@
+.raw-block-data {
+  all: initial;
+  width: 1000px;
+  background-color: white;
+}
+
+.string-value {
+  display: block;
+  width: 760px;
+}
