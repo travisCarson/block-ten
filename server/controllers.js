@@ -71,14 +71,12 @@ async function perpetuateLocalBlocks() {
   let nextBlockNum = startingBlockNum;
   setInterval(async () => {
     const newBlock = await getAndFormatBlock(nextBlockNum);
-    // console.log(newBlock);
     console.log(newBlock.blockNum);
     if (
       !newBlock.error &&
       !hasObjectWithKeyValue(localBlocks, "blockNum", newBlock.blockNum)
     ) {
       if (localBlocks.length < 10) {
-        // console.log(newBlock);
         localBlocks.push(newBlock);
       } else {
         localBlocks.shift();
