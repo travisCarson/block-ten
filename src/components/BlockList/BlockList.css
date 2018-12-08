@@ -3,8 +3,9 @@
   min-width: 200px;
   height: auto;
   min-height: 50px;
-  background-color: #e242f4;
+  background-color: #e87888;
   font-family: arial;
+  font-weight: bold;
   color: White;
   font-size: calc(2px + 3vmin);
   margin: 10px;

@@ -114,7 +114,6 @@ class BlockList extends Component {
             }
             const rowShading = index % 2 === 0 ? "even" : "odd";
             return (
-              // NEED TO FIX KEY
               <BlockCard
                 key={index}
                 id={id}
@@ -134,5 +133,3 @@ class BlockList extends Component {
 }
 
 export default BlockList;
-
-// <LoadButton handleClick={this.handleButtonClick} text={buttonText} />

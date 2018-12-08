@@ -2,9 +2,11 @@ p {
   margin: 0;
   color: black;
 }
+
 .how-to-collapse {
   font-size: 20px;
 }
+
 .spinner {
   width: 40px;
   height: 40px;

@@ -1,20 +1,20 @@
 import React from "react";
+import { string, bool } from "prop-types";
 import "./Spinner.css";
 
-const Spinner = props => {
-  return (
-    <>
-      <p>
-        {props.loadingRaw ? `Loading raw block data for ID ${props.id}` : ""}
-      </p>
-      <div className="spinner" />
-      <p className="how-to-collapse">
-        {props.loadingRaw
-          ? "Click anywhere in this box to collapse when finished"
-          : ""}
-      </p>
-    </>
-  );
+const Spinner = ({ id, loadingRaw }) => (
+  <>
+    <p>{loadingRaw ? `Loading raw block data for ID ${id}` : ""}</p>
+    <div className="spinner" />
+    <p className="how-to-collapse">
+      {loadingRaw ? "Click anywhere in this box to collapse when finished" : ""}
+    </p>
+  </>
+);
+
+Spinner.propTypes = {
+  id: string,
+  loadingRaw: bool
 };
 
 export default Spinner;

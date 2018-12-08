@@ -1,11 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
 
-// import BlockInfo from "../BlockInfo/BlockInfo";
-// import RawBlock from "../RawBlock/RawBlock";
-// import LoadingCard from "../LoadingCard/LoadingCard";
-// import dummyBlocks from "../../dummyBlocks";
-// import dummyRawJson from "../../dummyRawJson";
 import Header from "../Header/Header";
 import BlockList from "../BlockList/BlockList";
 
