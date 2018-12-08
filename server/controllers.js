@@ -1,7 +1,10 @@
+const fetch = require("node-fetch");
+const { JsonRpc } = require("eosjs");
+const { blockInfoUrl } = require("./config");
 const { formatBlock, hasObjectWithKeyValue } = require("./utils");
-const { rpc } = require("./server");
-const { apiUrl } = require("./config");
 const { localBlocks } = require("./models");
+
+const rpc = new JsonRpc(blockInfoUrl, { fetch });
 
 async function getAndFormatBlock(blockNum) {
   const block = await getBlock(blockNum);
@@ -23,10 +26,10 @@ async function getLatestBlockNum(tries = 1) {
   return info.head_block_num;
 }
 
-async function getBlock(number, maxAttempts = 5, attempts = 1) {
+async function getBlock(number, maxAttempts = 10, attempts = 1) {
   let block;
   try {
-    const data = await fetch(`${apiUrl}/v1/chain/get_block`, {
+    const data = await fetch(`${blockInfoUrl}/v1/chain/get_block`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -86,11 +89,16 @@ async function perpetuateLocalBlocks() {
   }, 440);
 }
 
-async function sendRawBlock(numOrId, res) {
-  res.send(await getBlock(numOrId));
+async function sendRawBlock(req, res) {
+  res.send(await getBlock(req.body.id));
 }
+
+const sendBlocks = function sendBlocks(req, res) {
+  res.send(localBlocks);
+};
 
 module.exports = {
   perpetuateLocalBlocks,
-  sendRawBlock
+  sendRawBlock,
+  sendBlocks
 };
