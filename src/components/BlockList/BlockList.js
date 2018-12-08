@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
-import LoadButton from "../LoadButton/LoadButton";
 import BlockCard from "../BlockCard/BlockCard";
 import BlockInfo from "../BlockInfo/BlockInfo";
 import RawBlockInfo from "../RawBlockInfo/RawBlockInfo";
 import Spinner from "../Spinner/Spinner";
-import dummyBlocks from "../../dummyBlocks";
 import "./BlockList.css";
 
 class BlockList extends Component {
@@ -26,7 +24,7 @@ class BlockList extends Component {
   async getBlocks() {
     const response = await axios.get("http://localhost:1111/");
 
-    // REMOVE: for testing with latency
+    // REMOVE IN PRODUCTION: simulating network latency
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
     await delay(2000);
     return response.data;
@@ -34,6 +32,7 @@ class BlockList extends Component {
 
   // needs error handling
   async getRaw(id) {
+    console.log(id);
     const cached = this.state.rawBlocks.has(id);
     if (cached) {
       return this.state.rawBlocks.get(id);
@@ -41,7 +40,7 @@ class BlockList extends Component {
     let rawBlock = await axios.post("http://localhost:1111/", {
       id
     });
-    return rawBlock;
+    return rawBlock.data;
   }
 
   async handleButtonClick() {

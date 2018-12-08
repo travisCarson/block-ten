@@ -6,10 +6,16 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "run-dev-server": "nodemon ./server/server.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "eosjs": "^16.0.9",
+    "express": "^4.16.4",
+    "node": "^11.3.0",
+    "node-fetch": "^2.3.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-json-view": "^1.19.1",
@@ -25,6 +31,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-react": "^7.11.1",
     "eslint-plugin-standard": "^4.0.0",
+    "nodemon": "^1.18.7",
     "prettier": "^1.15.3"
   },
   "eslintConfig": {
