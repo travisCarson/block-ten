@@ -10,7 +10,7 @@ I will continue to make commits until the project is at a place where I feel goo
 
 \*_excluding this readme, which was pushed to master after the due date_
 
-This readme is a work in progress. I'll be updating it soon (tonight)
+This readme, and the app, is a work in progress. I'll be updating it soon (tonight)
 
 ## Challenges
 
