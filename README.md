@@ -26,15 +26,17 @@ I've since refactored to connect to a local node running an independent chain. U
 
 ### Making requests from the server
 
-My first implementation used polling to get data from EOS New York, then cached it, so that the user always had ten fresh blocks to request. EOS NY started returning bad data when the polling rate was increased past about 500 ms. If these requests were made from the browser, the user would have to wait 5 seconds, just to initiate all ten requests, without considering the time it would take to download the blocks.
+My first implementation used polling to get data from EOS New York, then cached it, so that the user always had ten fresh blocks to request. This worked well. EOS NY started returning bad data when the polling rate was increased past about 500 ms. If these requests were made from the browser, the user would have to wait 5 seconds, just to initiate all ten requests, without considering the time it would take to download the blocks.
 
 With a block time of 500 ms, by the time the requests would be initiated, 10 new blocks would have been produced.
 
-### Raw JSON block loading time
+Using JsonRPC properly, along with nodeos running in a docker container, my second implementation has none of these issues.
+
+##### Raw JSON block loading time
 
 Simulating a slow 3g connection showed that downloading a single raw JSON block often took more than four seconds. Page load times for 10 blocks averaged about 18 seconds.
 
-Block.ten has a reputation to uphold. We deliver the fastest ten blocks in town. Making the requests server side was out of the question.
+Block.ten has a reputation to uphold. We deliver the fastest ten blocks in town. Making the requests client side was out of the question.
 
 ### More decisions to be written about soon
 
