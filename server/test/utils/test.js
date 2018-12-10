@@ -1,7 +1,10 @@
 const { expect } = require("chai");
 const { formatBlock, validateBlock } = require("../../utils");
-const dummyRawBlock = require("../dummyData/dummyRawBlock");
-const rawBlockFiveActions = require("../dummyData/rawBlockFiveActions");
+const {
+  rawBlock,
+  rawBlockWithFiveActions,
+  rawBlockMissingTransactions
+} = require("../../../testDummies");
 
 describe("Utilities", () => {
   describe("formatBlock", () => {
@@ -11,7 +14,7 @@ describe("Utilities", () => {
       timestamp: "2018-12-06T03:06:07.500",
       actionCount: 42
     };
-    const formatted = formatBlock(dummyRawBlock);
+    const formatted = formatBlock(rawBlock);
 
     it("should format a block to be displayed on the client", () => {
       expect(formatted).to.eql(goodBlock);
@@ -25,7 +28,7 @@ describe("Utilities", () => {
     });
 
     it("should count the number of actions", () => {
-      const formattedRawBlockFiveActions = formatBlock(rawBlockFiveActions);
+      const formattedRawBlockFiveActions = formatBlock(rawBlockWithFiveActions);
       expect(formattedRawBlockFiveActions.actionCount).to.equal(5);
     });
 
@@ -36,8 +39,8 @@ describe("Utilities", () => {
   });
 
   describe("validateBlock", () => {
-    const goodBlock = require("./dummyRawBlock");
-    const badBlock = require("./dummyRawBlockNoTransactions");
+    const goodBlock = rawBlock;
+    const badBlock = rawBlockMissingTransactions;
 
     it("should invalidate a bad block", () => {
       const invalid = validateBlock(badBlock);

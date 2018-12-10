@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
-import BlockCard from "../BlockCard/BlockCard";
-import BlockInfo from "../BlockInfo/BlockInfo";
-import RawBlockInfo from "../RawBlockInfo/RawBlockInfo";
-import Spinner from "../Spinner/Spinner";
+import BlockCard from "../BlockCard";
+import BlockInfo from "../BlockInfo";
+import RawBlockInfo from "../RawBlockInfo";
+import Spinner from "../Spinner";
 import "./BlockList.css";
 
 class BlockList extends Component {
@@ -108,7 +108,7 @@ class BlockList extends Component {
                 <Spinner id={id} loadingRaw={loading === id} />
               );
             } else if (showRaw === id) {
-              willRender = () => <RawBlockInfo rawData={rawBlocks.get(id)} />;
+              willRender = () => <RawBlockInfo rawJson={rawBlocks.get(id)} />;
             } else {
               willRender = props => <BlockInfo {...props} />;
             }
