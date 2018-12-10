@@ -1,16 +1,3 @@
-const hasObjectWithKeyValue = function hasObjectWithKeyValue(
-  array,
-  key,
-  value
-) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i][key] && array[i][key] === value) {
-      return true;
-    }
-  }
-  return false;
-};
-
 /* eslint-disable camelcase */
 const formatBlock = function formatBlock(rawBlock) {
   if (!rawBlock) {
@@ -30,10 +17,29 @@ const formatBlock = function formatBlock(rawBlock) {
     }
     return 0;
   }, 0);
-  return { blockNum: block_num, id, timestamp, actionCount };
+  return { block_num, id, timestamp, actionCount };
 };
 
+const validateBlock = function validateBlock(block) {
+  if (
+    block &&
+    block.block_num &&
+    block.timestamp &&
+    block.id &&
+    block.transactions
+  ) {
+    return true;
+  }
+  return false;
+};
+
+async function handleError(error, customMessage) {
+  console.log(customMessage);
+  console.log(error);
+}
+
 module.exports = {
-  hasObjectWithKeyValue,
-  formatBlock
+  formatBlock,
+  validateBlock,
+  handleError
 };

@@ -1,102 +1,61 @@
-const fetch = require("node-fetch");
+/* eslint-disable camelcase */
 const { JsonRpc } = require("eosjs");
-const { blockInfoUrl } = require("./config");
-const { formatBlock, hasObjectWithKeyValue } = require("./utils");
-const { localBlocks } = require("./models");
+const fetch = require("node-fetch");
+const { formatBlock, validateBlock, handleError } = require("./utils");
+const { rpcConfig } = require("./config");
+const { rpcUrl, rpcPort, maxRetryAttempts } = rpcConfig;
 
-const rpc = new JsonRpc(blockInfoUrl, { fetch });
+const rpc = new JsonRpc(`${rpcUrl}:${rpcPort}`, { fetch });
 
-async function getAndFormatBlock(blockNum) {
-  const block = await getBlock(blockNum);
-
-  const formatted = formatBlock(block);
-  return formatted;
-}
-
-async function getLatestBlockNum(tries = 1) {
+async function getHeadBlockNum(maxAttemps = 3, attempts = 1) {
   let info;
   try {
     info = await rpc.get_info();
   } catch (error) {
-    console.log(error);
-    if (tries < 3) {
-      getLatestBlockNum(tries + 1);
-    }
+    handleError(error, "Error receiving head block num:");
   }
   return info.head_block_num;
 }
 
-async function getBlock(number, maxAttempts = 10, attempts = 1) {
-  let block;
+async function getBlock(block_num, maxAttempts = maxRetryAttempts, prevError) {
+  let rawBlock;
   try {
-    const data = await fetch(`${blockInfoUrl}/v1/chain/get_block`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ block_num_or_id: `${number}` })
-    });
-    block = await data.json();
-  } catch (err) {
-    console.log(err);
-    if (attempts > maxAttempts) {
-      console.log(`Failed to get block ${number}`);
-      return null;
-    }
-    console.log(
-      `Failed to get block ${number} ${attempts} times. Trying again`
-    );
-    return getBlock(number, maxAttempts, attempts + 1);
-  }
-  if (!block || !block.block_num) {
-    console.log(
-      `Failed to get block ${number} ${attempts} times. Trying again`
-    );
-    if (attempts > maxAttempts) {
-      console.log(`Failed to get block ${number}`);
-      return null;
-    }
-    return getBlock(number, maxAttempts, attempts + 1);
-  }
-  return block;
-}
-
-async function perpetuateLocalBlocks() {
-  const startingBlockNum = await getLatestBlockNum();
-  if (!startingBlockNum) {
-    console.log("unable to get head block");
+    rawBlock = await rpc.get_block(block_num);
+  } catch (error) {
+    handleError(error, `Error retrieving block number ${block_num}`);
     return;
   }
-  let nextBlockNum = startingBlockNum;
-  setInterval(async () => {
-    const newBlock = await getAndFormatBlock(nextBlockNum);
-    console.log(newBlock.blockNum);
-    if (
-      !newBlock.error &&
-      !hasObjectWithKeyValue(localBlocks, "blockNum", newBlock.blockNum)
-    ) {
-      if (localBlocks.length < 10) {
-        localBlocks.push(newBlock);
-      } else {
-        localBlocks.shift();
-        localBlocks.push(newBlock);
-      }
-      nextBlockNum += 1;
-    }
-  }, 440);
+  if (!validateBlock(rawBlock)) {
+    const error = {
+      message: `RPC returned an invalid block`
+    };
+    return handleError(error, error.message);
+  }
+  return rawBlock;
+}
+
+async function getAndFormatBlock(block_num) {
+  return formatBlock(await getBlock(block_num));
+}
+
+async function getTenMostRecentBlocks() {
+  const headBlock = await getAndFormatBlock(await getHeadBlockNum());
+  const blocks = [headBlock];
+  for (let i = 1; i < 10; i++) {
+    blocks.push(await getAndFormatBlock(headBlock.block_num - i));
+  }
+  return blocks;
 }
 
 async function sendRawBlock(req, res) {
   res.send(await getBlock(req.body.id));
 }
 
-const sendBlocks = function sendBlocks(req, res) {
-  res.send(localBlocks);
-};
+async function sendTenBlocks(req, res) {
+  res.send(await getTenMostRecentBlocks());
+}
 
 module.exports = {
-  perpetuateLocalBlocks,
   sendRawBlock,
-  sendBlocks
+  sendTenBlocks
 };

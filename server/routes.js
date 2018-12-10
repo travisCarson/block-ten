@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { sendRawBlock, sendBlocks } = require("./controllers");
+const { sendRawBlock, sendTenBlocks } = require("./controllers");
 
 const router = express.Router();
 
@@ -15,13 +15,10 @@ router.use((req, res, next) => {
   next();
 });
 
-router.route("/").get((req, res) => sendBlocks(req, res));
+router.route("/").get((req, res) => sendTenBlocks(req, res));
 
-router
-  .route("/")
-  .get(() => console.log("router thing"))
-  .post((req, res, next) => {
-    sendRawBlock(req, res);
-  });
+router.route("/").post((req, res, next) => {
+  sendRawBlock(req, res);
+});
 
 module.exports = router;
