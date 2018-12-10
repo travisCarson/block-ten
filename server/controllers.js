@@ -57,5 +57,9 @@ async function sendTenBlocks(req, res) {
 
 module.exports = {
   sendRawBlock,
-  sendTenBlocks
+  sendTenBlocks,
+  getHeadBlockNum,
+  getBlock,
+  getAndFormatBlock,
+  getTenMostRecentBlocks
 };
