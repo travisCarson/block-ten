@@ -10,7 +10,30 @@ I will continue to make commits until the project is at a place where I feel goo
 
 \*_excluding this readme, which was pushed to master after the due date_
 
-This readme, and the app, is a work in progress. I'll be updating it soon (tonight)
+## Configuration
+
+The server can be configured to return blocks from either a local node, or a list of remote nodes.
+
+If errors occur in the requests to remote nodes, the request will be sent to the next block producer in the list.
+
+```
+server/config.json
+
+{
+  "serverPort": 1111,
+  "rpcConfig": {
+    "blockSource": "remote",
+    "localNodeUrl": "http://127.0.0.1",
+    "localNodePort": 8888,
+    "remoteNodeList": [
+      { "eosnewyorkio": "http://api.eosnewyork.io" },
+      { "cypherglasss": "http://api.cypherglass.com" },
+      { "eoscanadacom": "http://mainnet.eoscanada.com" },
+      { "eoscafeblock": "http://mainnet.eoscalgary.io" }
+    ]
+  }
+}
+```
 
 ## Challenges
 
@@ -18,9 +41,9 @@ This readme, and the app, is a work in progress. I'll be updating it soon (tonig
 
 I had never run an eosio node, so I spent quite a while trying to understand eosjs, nodeos, and docker. I had difficulties connecting my node to the EOS mainnet, but eventually decided that that's probably not a big deal, since it's my understanding that block.one makes software that's not for one particular chain. It won't be too difficult to point it at the mainchain, or a sidechain, when the time comes.
 
-In my haste to begin building the frontend, I misunderstood the purpose of JsonRPC. Instead of feeding JsonRPC localhost as a parameter, I gave it the address of EOS new york. This made it improperly function as an API client, but at least I was getting data to build with.
+In my haste to begin building the frontend, I misunderstood the purpose of JsonRPC. Instead of feeding JsonRPC localhost as a parameter, I gave it the address of EOS new york. This made the API client function improperly, but at least I was getting data to build with.\*
 
-I've since refactored to connect to a local node running an independent chain. Unfortunately, nobody seems to be using my blockchain.
+\*Actually, this seems to work just fine. So, I've added support for both local and remote nodes. (see configuration section above)
 
 ## Decisions
 
@@ -41,8 +64,6 @@ Block.ten has a reputation to uphold. We deliver the fastest ten blocks in town.
 ### More decisions to be written about soon
 
 ## Discussion
-
-The polling strategy (master branch) worked well, but due to my misunderstanding of how JsonRPC worked, I had to build my own 'fetch' method. This was definitely a sign that I had gotten off track, but due to the time constraint, I opted to continue building and then refactor later, if time permitted (it didn't).
 
 I spent too much time learning about eosjs, creating a node, and trying to connect my node to the mainnet, which in hindsight wasn't important. Due to these issues, I wasn't able to write tests or do the extra credit before the deadline. I will be finishing the project in my spare time over the next few days though!
 
