@@ -3,11 +3,11 @@ const { JsonRpc } = require("eosjs");
 const fetch = require("node-fetch");
 const { formatBlock, validateBlock, handleError } = require("./utils");
 const { rpcConfig } = require("./config");
-const { rpcUrl, rpcPort, maxRetryAttempts } = rpcConfig;
+const { localNodeUrl, localNodePort } = rpcConfig;
 
-const rpc = new JsonRpc(`${rpcUrl}:${rpcPort}`, { fetch });
+const rpc = new JsonRpc(`${localNodeUrl}:${localNodePort}`, { fetch });
 
-async function getHeadBlockNum(maxAttemps = 3, attempts = 1) {
+async function getHeadBlockNum() {
   let info;
   try {
     info = await rpc.get_info();
@@ -17,7 +17,7 @@ async function getHeadBlockNum(maxAttemps = 3, attempts = 1) {
   return info.head_block_num;
 }
 
-async function getBlock(block_num, maxAttempts = maxRetryAttempts, prevError) {
+async function getBlock(block_num) {
   let rawBlock;
   try {
     rawBlock = await rpc.get_block(block_num);

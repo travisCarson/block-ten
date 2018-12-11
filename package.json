@@ -8,7 +8,7 @@
     "test": "react-scripts test",
     "server-test": "mocha server/test/utils/test.js server/test/controllers/test.js",
     "eject": "react-scripts eject",
-    "dev-server": "nodemon server/server.js",
+    "dev-server": "nodemon server/server.js -L",
     "dev": "concurrently --kill-others-on-fail \"npm run dev-server\" \"npm run start\""
   },
   "dependencies": {
@@ -45,10 +45,5 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
 }

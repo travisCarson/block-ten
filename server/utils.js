@@ -1,8 +1,16 @@
 /* eslint-disable camelcase */
+const hasBlock = function hasBlock(array, key, value) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][key] && array[i][key] === value) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const formatBlock = function formatBlock(rawBlock) {
   if (!rawBlock) {
-    const error = "no data received";
-    return { blockNum: rawBlock, error };
+    return;
   }
   const { id, timestamp, transactions, block_num } = rawBlock;
 
@@ -41,5 +49,6 @@ async function handleError(error, customMessage) {
 module.exports = {
   formatBlock,
   validateBlock,
-  handleError
+  handleError,
+  hasBlock
 };
