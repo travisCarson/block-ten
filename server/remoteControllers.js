@@ -140,5 +140,3 @@ module.exports = {
   getTenMostRecentBlocks,
   perpetuateBlocks
 };
-
-// not sure what's up with this one. Nothing happens
