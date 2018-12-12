@@ -12,9 +12,9 @@ const BlockInfo = ({ id, timestamp, actionCount, handleClick }) => (
 
 BlockInfo.propTypes = {
   id: string.isRequired,
-  timestamp: string,
-  actionCount: number,
-  handleClick: func
+  timestamp: string.isRequired,
+  actionCount: number.isRequired,
+  handleClick: func.isRequired
 };
 
 export default BlockInfo;

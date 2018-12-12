@@ -1,0 +1,15 @@
+{
+  "serverPort": 1111,
+  "rpcConfig": {
+    "blockSource": "remote",
+    "localNodeUrl": "http://127.0.0.1",
+    "localNodePort": 8888,
+    "remoteNodeList": [
+      { "eosnewyorkio": "http://api.eosnewyork.io" },
+      { "cypherglasss": "http://api.cypherglass.com" },
+      { "eoscanadacom": "http://mainnet.eoscanada.com" },
+      { "eoscafeblock": "http://mainnet.eoscalgary.io" }
+    ],
+    "maxRequests": 15
+  }
+}
