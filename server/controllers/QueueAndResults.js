@@ -17,13 +17,10 @@ class QueueAndResultsController {
     this.running = true;
     const { results } = this;
     while (this.queue.toGet.length) {
-      console.log("toGet", this.queue.toGet, this.queue.toGet.length);
       let newBlocks = this.queue.toGet.map(async block_num => {
         return getFormattedBlock(block_num);
       });
       newBlocks = await Promise.all(newBlocks);
-      newBlocks = newBlocks.map(block => block.block_num); // delete this
-      console.log("GOT", newBlocks);
       results.handleNewBlocks(newBlocks);
       this.queue.batchDequeue(newBlocks.length);
     }
@@ -47,7 +44,7 @@ class QueueAndResultsController {
     this.requestAll();
   }
 
-  getTen() {
+  getResults() {
     return this.results.smallBlocks;
   }
 }
@@ -56,10 +53,12 @@ const queueAndResultsController = new QueueAndResultsController();
 queueAndResultsController.start();
 
 const getBlockListRouteHandler = async function(req, res) {
-  res.send(queueAndResultsController.getTen());
+  console.log("GETTING LIST", queueAndResultsController.getResults());
+  res.send(queueAndResultsController.getResults());
 };
 
 const getRawBlockRouteHandler = async function(req, res) {
+  console.log("GETTING RAW", req.body.id);
   res.send(await getBlock(req.body.id));
 };
 
