@@ -9,6 +9,7 @@
       { "cypherglasss": "http://api.cypherglass.com" },
       { "eoscanadacom": "http://mainnet.eoscanada.com" },
       { "eoscafeblock": "http://mainnet.eoscalgary.io" }
-    ]
+    ],
+    "maxRequests": 15
   }
 }

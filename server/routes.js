@@ -1,10 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { rpcConfig } = require("./config");
-const { sendRawBlock, sendTenBlocks } =
-  rpcConfig.blockSource === "remote"
-    ? require("./remoteControllers")
-    : require("./localControllers");
+const {
+  sendRawBlock,
+  sendTenBlocks
+} = require("./controllers/QueueAndResults");
 
 const router = express.Router();
 
