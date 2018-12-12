@@ -29,10 +29,10 @@ class QueueAndResultsController {
 
   async enqueuePerpetually(firstBlockNum) {
     const { queue } = this;
+    let nextNum = firstBlockNum;
     const intervalID = setInterval(() => {
-      let nextNum = firstBlockNum;
-      nextNum = queue.lastNumEnqueued + 1;
       queue.enqueueOne(nextNum);
+      nextNum = queue.lastNumEnqueued + 1;
       this.requestAll();
     }, 500);
     return intervalID;
@@ -53,12 +53,10 @@ const queueAndResultsController = new QueueAndResultsController();
 queueAndResultsController.start();
 
 const getBlockListRouteHandler = async function(req, res) {
-  console.log("GETTING LIST", queueAndResultsController.getResults());
   res.send(queueAndResultsController.getResults());
 };
 
 const getRawBlockRouteHandler = async function(req, res) {
-  console.log("GETTING RAW", req.body.id);
   res.send(await getBlock(req.body.id));
 };
 
