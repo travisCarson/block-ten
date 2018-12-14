@@ -7,8 +7,7 @@ const {
   formatBlock,
   validateBlock,
   validateGetInfo,
-  getNextEndpoint,
-  handleError
+  getNextEndpoint
 } = require("./utils");
 
 const {
@@ -32,6 +31,30 @@ const endpointList = prepareEndpointList(
 const endpoint = getNextEndpoint(endpointList, 0);
 
 const initialRpc = new JsonRpc(endpoint, { fetch });
+
+const handleError = async function({
+  error,
+  callback,
+  callbackArgs,
+  failureCount = 1,
+  endpointList
+}) {
+  let newResult;
+  console.log(`Error count: ${failureCount}\n ${error}`);
+  const nextEndpoint = getNextEndpoint(endpointList, failureCount);
+  if (!nextEndpoint) {
+    console.log("Maximum attempts made - Request Failed");
+    return;
+  }
+  const nextRpc = new JsonRpc(nextEndpoint, { fetch });
+  console.log("nextRpc endpoint", nextRpc.endpoint);
+  if (callbackArgs.length) {
+    newResult = callback(...callbackArgs, nextRpc, failureCount);
+    return newResult;
+  }
+  newResult = callback(nextRpc, failureCount);
+  return newResult;
+};
 
 const getHeadBlockNum = async function(rpc = initialRpc, failureCount = 0) {
   let info;

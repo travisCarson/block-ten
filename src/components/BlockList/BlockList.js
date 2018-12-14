@@ -102,7 +102,7 @@ class BlockList extends Component {
         </button>
         <div>
           {blocks.map((block, index) => {
-            const { id, timestamp, actionCount } = block;
+            const { id, timestamp, actionCount, block_num } = block;
             if (loading === true || loading === id) {
               willRender = () => (
                 <Spinner id={id} loadingRaw={loading === id} />
@@ -116,6 +116,7 @@ class BlockList extends Component {
             return (
               <BlockCard
                 key={index}
+                num={block_num}
                 id={id}
                 timestamp={timestamp}
                 actionCount={actionCount}

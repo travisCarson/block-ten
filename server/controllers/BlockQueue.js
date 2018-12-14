@@ -5,13 +5,34 @@ class BlockQueue {
     this.lastNumEnqueued = null;
   }
 
-  async enqueueOne(block_num) {
-    this.toGet.push(block_num);
-    this.lastNumEnqueued = block_num;
+  batchEnqueue(lowest, highest) {
+    let newNumbers = [];
+    for (let i = lowest; i <= highest; i++) {
+      newNumbers.push(i);
+      if (i === highest) {
+        this.lastNumEnqueued = i;
+      }
+    }
+    this.toGet = this.toGet.concat(newNumbers);
   }
 
-  batchDequeue(size) {
-    this.toGet = this.toGet.slice(size);
+  dequeueAll() {
+    const results = this.toGet.slice();
+    this.toGet = [];
+    return results;
+  }
+
+  peekAtLastEnqueued() {
+    return this.lastNumEnqueued;
+  }
+
+  flush() {
+    this.toGet = [];
+    this.lastNumEnqueued = null;
+  }
+
+  size() {
+    return this.toGet.length;
   }
 }
 

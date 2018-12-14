@@ -1,6 +1,4 @@
 /* eslint-disable camelcase */
-const { JsonRpc } = require("eosjs");
-const fetch = require("node-fetch");
 
 const prepareEndpointList = function(
   originalList,
@@ -82,35 +80,10 @@ const validateGetInfo = function(info) {
   return !info || !info.head_block_num || typeof headBlockNum !== "number";
 };
 
-const handleError = async function({
-  error,
-  callback,
-  callbackArgs,
-  failureCount = 1,
-  endpointList
-}) {
-  let newResult;
-  console.log(`Error count: ${failureCount}\n ${error}`);
-  const nextEndpoint = getNextEndpoint(endpointList, failureCount);
-  if (!nextEndpoint) {
-    console.log("Maximum attempts made - Request Failed");
-    return;
-  }
-  const nextRpc = new JsonRpc(nextEndpoint, { fetch });
-  console.log("nextRpc", nextRpc.endpoint);
-  if (callbackArgs.length) {
-    newResult = callback(...callbackArgs, nextRpc, failureCount);
-    return newResult;
-  }
-  newResult = callback(nextRpc, failureCount);
-  return newResult;
-};
-
 module.exports = {
   formatBlock,
   validateBlock,
   validateGetInfo,
-  handleError,
   prepareEndpointList,
   getNextEndpoint
 };

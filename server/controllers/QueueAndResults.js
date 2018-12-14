@@ -2,50 +2,114 @@
 const { getHeadBlockNum, getBlock, getFormattedBlock } = require("./helpers");
 const BlockQueue = require("./BlockQueue");
 const Results = require("./Results");
+const { blocksToDisplay, resyncMargin } = require("../config");
+const { decorateWithPerformanceTools } = require("./analysisTools");
+const CronJob = require("cron").CronJob;
 
 class QueueAndResultsController {
   constructor(results) {
     this.queue = new BlockQueue();
-    this.results = new Results();
-    this.running = false;
+    this.results = new Results(blocksToDisplay);
+    this.requesting = false;
+    this.cronJobs = [];
   }
 
   async requestAll() {
-    if (this.running) {
+    if (this.requesting) {
       return;
     }
-    this.running = true;
-    const { results } = this;
-    while (this.queue.toGet.length) {
-      let newBlocks = this.queue.toGet.map(async block_num => {
+    this.requesting = true;
+    const { results, queue } = this;
+    while (queue.size()) {
+      let newBlocks = queue.dequeueAll().map(async block_num => {
         return getFormattedBlock(block_num);
       });
       newBlocks = await Promise.all(newBlocks);
+      newBlocks = newBlocks.map(block => block.block_num);
       results.handleNewBlocks(newBlocks);
-      this.queue.batchDequeue(newBlocks.length);
     }
-    this.running = false;
+    this.requesting = false;
   }
 
   async enqueuePerpetually(firstBlockNum) {
     const { queue } = this;
     let nextNum = firstBlockNum;
-    const intervalID = setInterval(() => {
-      queue.enqueueOne(nextNum);
-      nextNum = queue.lastNumEnqueued + 1;
+    const cronJobEnqueuePerpetually = new CronJob("* * * * * *", () => {
+      queue.batchEnqueue(nextNum - 1, nextNum);
+      nextNum = nextNum + 2;
       this.requestAll();
-    }, 500);
-    return intervalID;
+    });
+    this.cronJobs.push(cronJobEnqueuePerpetually);
+    cronJobEnqueuePerpetually.start();
   }
 
-  async start() {
+  async sync() {
+    const { results, queue } = this;
     const headBlockNum = await getHeadBlockNum();
+    const lastResultNum = results.peekAtMostRecentBlockNum();
+    let lastNumEnqueued = queue.peekAtLastEnqueued();
+
+    const queueDifference = !lastNumEnqueued
+      ? 0
+      : Math.abs(headBlockNum - lastNumEnqueued);
+
+    const resultsDifference = !lastResultNum
+      ? 0
+      : Math.abs(headBlockNum - lastResultNum);
+
+    const maxDifference = Math.max(queueDifference, resultsDifference);
+
+    // only used if this instance is decorated with test utils
+    if (this.analyzePerformance) {
+      this.analyzePerformance(
+        maxDifference,
+        headBlockNum,
+        lastResultNum,
+        lastNumEnqueued,
+        queueDifference,
+        resultsDifference
+      );
+    }
+
+    if (maxDifference > resyncMargin) {
+      console.log(
+        `\n
+        \nOUT OF SYNC. Difference: ${maxDifference}
+        \nHead Block ${headBlockNum}
+        \nNewest Result ${lastResultNum}
+        \nNewest Enqueued ${lastNumEnqueued}
+        \nBlock numbers enqueued ${queue.toGet.length}
+        \nDifference: ${maxDifference}`
+      );
+      this.stopCronJobs();
+      queue.flush();
+      results.flush();
+      this.resetPerformanceStats();
+      this.start(headBlockNum);
+    }
+  }
+
+  stopCronJobs() {
+    this.cronJobs.forEach(job => job.stop());
+    this.cronJobs = [];
+  }
+
+  maintainSync() {
+    const cronJobMaintainSync = new CronJob("*/4 * * * * *", () => {
+      this.sync();
+    });
+    this.cronJobs.push(cronJobMaintainSync);
+    cronJobMaintainSync.start();
+  }
+
+  async start(headBlockNum) {
+    headBlockNum = headBlockNum || (await getHeadBlockNum());
     this.enqueuePerpetually(headBlockNum);
-    this.requestAll();
+    this.maintainSync();
   }
 
   getResults() {
-    return this.results.smallBlocks;
+    return this.results.getResults();
   }
 }
 
