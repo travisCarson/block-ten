@@ -3,7 +3,6 @@ const { getHeadBlockNum, getBlock, getFormattedBlock } = require("./helpers");
 const BlockQueue = require("./BlockQueue");
 const Results = require("./Results");
 const { blocksToDisplay, resyncMargin } = require("../config");
-const { decorateWithPerformanceTools } = require("./analysisTools");
 const CronJob = require("cron").CronJob;
 
 class QueueAndResultsController {
