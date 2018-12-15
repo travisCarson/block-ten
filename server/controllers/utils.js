@@ -7,12 +7,20 @@ const prepareEndpointList = function(
   localNodeUrl,
   localNodePort
 ) {
+  console.log('PREPARING')
   let endpointList = originalList.slice();
   if (blockSource === "local") {
     endpointList = new Array(maxRequests).fill({
       localhost: `${localNodeUrl}:${localNodePort}`
     });
     return endpointList;
+  }
+  if (blockSource === "local-remote-fallback") {
+    console.log('PREPARING FALLBACK')
+    endpointList.unshift({
+      localhost: `${localNodeUrl}:${localNodePort}`
+    });
+    console.log(endpointList)
   }
   const paddedList = padEndpointList(endpointList, maxRequests);
   return paddedList;
@@ -33,6 +41,7 @@ const padEndpointList = function(
     const lastIndex = endpointList.length + paddingSize;
     endpointList = endpointList.slice(0, lastIndex);
   }
+  console.log(endpointList);
   return endpointList;
 };
 

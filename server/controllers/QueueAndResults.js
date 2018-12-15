@@ -24,7 +24,6 @@ class QueueAndResultsController {
         return getFormattedBlock(block_num);
       });
       newBlocks = await Promise.all(newBlocks);
-      newBlocks = newBlocks.map(block => block.block_num);
       results.handleNewBlocks(newBlocks);
     }
     this.requesting = false;

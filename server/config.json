@@ -13,5 +13,5 @@
     ],
     "maxRequests": 15
   },
-  "resyncMargin": 15
+  "resyncMargin": 20
 }
